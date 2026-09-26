@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agendamento de Oradores</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===================== TELA DE LOGIN ===================== -->
+  <section id="loginScreen" class="screen">
+    <div class="login-card">
+      <div class="login-logo">📖</div>
+      <h1>Agendamento de Oradores</h1>
+      <p class="subtitle">Faça login para continuar</p>
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="username">Usuário</label>
+          <input type="text" id="username" autocomplete="username" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" autocomplete="current-password" required>
+        </div>
+        <p id="loginError" class="error-msg"></p>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== TELA PRINCIPAL (APP) ===================== -->
+  <section id="appScreen" class="screen hidden">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">📅</span>
+        <h1>Agendamento de Oradores</h1>
+      </div>
+      <div class="header-actions">
+        <div class="a11y-controls" title="Ajustar tamanho do calendário">
+          <button id="a11yDecreaseBtn" class="btn btn-icon a11y-btn" aria-label="Diminuir tamanho do calendário">A-</button>
+          <button id="a11yIncreaseBtn" class="btn btn-icon a11y-btn" aria-label="Aumentar tamanho do calendário">A+</button>
+        </div>
+        <button id="viewSpeakersBtn" class="btn btn-outline">👥 Ver Oradores</button>
+        <a href="oradores.html" class="btn btn-outline">🎙️ Oradores Locais</a>
+        <button id="manageEsbocosBtn" class="btn btn-outline">📋 Esboços</button>
+        <button id="downloadPdfBtn" class="btn btn-outline">⬇ Baixar PDF do mês</button>
+        <button id="logoutBtn" class="btn btn-ghost">Sair</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <div class="calendar-wrapper">
+        <div class="calendar-toolbar">
+          <button id="prevMonthBtn" class="btn btn-icon">‹</button>
+          <h2 id="monthLabel"></h2>
+          <button id="nextMonthBtn" class="btn btn-icon">›</button>
+        </div>
+
+        <div class="weekdays">
+          <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+        </div>
+
+        <div id="calendarGrid" class="calendar-grid"></div>
+
+        <div class="legend">
+          <strong>Legenda de cores:</strong>
+          <div id="legendList" class="legend-list"></div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ===================== MODAL DE AGENDAMENTO ===================== -->
+  <div id="appointmentModal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalDateLabel">Agendamento</h2>
+        <button id="closeModalBtn" class="modal-close">&times;</button>
+      </div>
+
+      <form id="appointmentForm" class="modal-body">
+        <div class="input-group">
+          <label for="orador">Nome do Orador</label>
+          <input type="text" id="orador" placeholder="Ex: João da Silva">
+        </div>
+
+        <div class="input-group">
+          <label for="congregacao">Congregação</label>
+          <input type="text" id="congregacao" placeholder="Ex: Congregação Central">
+        </div>
+
+        <div class="row-2">
+          <div class="input-group">
+            <label for="tema">Tema do Discurso</label>
+            <input type="text" id="tema" list="temasEsbocosList" placeholder="Ex: A fé que agrada a Deus">
+            <datalist id="temasEsbocosList"></datalist>
+          </div>
+          <div class="input-group">
+            <label for="numero">Número</label>
+            <input type="text" id="numero" list="numerosEsbocosList" placeholder="Ex: 12" inputmode="numeric">
+            <datalist id="numerosEsbocosList"></datalist>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="telefone">Telefone de Contato</label>
+          <input type="tel" id="telefone" placeholder="(99) 99999-9999">
+        </div>
+
+        <div class="input-group">
+          <label for="observacoes">Outras Observações</label>
+          <textarea id="observacoes" rows="3" placeholder="Observações adicionais..."></textarea>
+        </div>
+
+        <div class="input-group">
+          <label>Cor do dia</label>
+          <div class="color-picker" id="colorPicker">
+            <button type="button" class="color-swatch" data-color="#4361ee" style="background:#4361ee" title="Azul"></button>
+            <button type="button" class="color-swatch" data-color="#2ec4b6" style="background:#2ec4b6" title="Turquesa"></button>
+            <button type="button" class="color-swatch" data-color="#e63946" style="background:#e63946" title="Vermelho"></button>
+            <button type="button" class="color-swatch" data-color="#ff9f1c" style="background:#ff9f1c" title="Laranja"></button>
+            <button type="button" class="color-swatch" data-color="#8338ec" style="background:#8338ec" title="Roxo"></button>
+            <button type="button" class="color-swatch" data-color="#06d6a0" style="background:#06d6a0" title="Verde-água"></button>
+            <button type="button" class="color-swatch" data-color="#ef476f" style="background:#ef476f" title="Rosa"></button>
+            <button type="button" class="color-swatch" data-color="#ffd166" style="background:#ffd166" title="Amarelo"></button>
+            <button type="button" class="color-swatch" data-color="#118ab2" style="background:#118ab2" title="Azul petróleo"></button>
+            <button type="button" class="color-swatch" data-color="#06a77d" style="background:#06a77d" title="Verde"></button>
+            <button type="button" class="color-swatch" data-color="#7209b7" style="background:#7209b7" title="Violeta"></button>
+            <button type="button" class="color-swatch" data-color="#495057" style="background:#495057" title="Cinza"></button>
+            <label class="custom-color-wrap" title="Cor personalizada">
+              <input type="color" id="customColor" value="#4361ee">
+              <span>+</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="deleteAppointmentBtn" class="btn btn-danger">Excluir</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL LISTA DE ORADORES ===================== -->
+  <div id="speakersModal" class="modal-overlay hidden">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h2 id="speakersModalTitle">Oradores do mês</h2>
+        <button id="closeSpeakersModalBtn" class="modal-close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="speakersList" class="speakers-list"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="speakersDownloadPdfBtn" class="btn btn-primary">⬇ Baixar PDF do mês</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL GERENCIAR ESBOÇOS ===================== -->
+  <div id="esbocosModal" class="modal-overlay hidden">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h2>📋 Esboços de Discursos</h2>
+        <button id="closeEsbocosModalBtn" class="modal-close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="esbocoForm" class="row-2" style="align-items:flex-end;">
+          <div class="input-group">
+            <label for="esbocoNumero">Número</label>
+            <input type="text" id="esbocoNumero" placeholder="Ex: 195" inputmode="numeric" required>
+          </div>
+          <div class="input-group">
+            <label for="esbocoTema">Tema</label>
+            <input type="text" id="esbocoTema" placeholder="Tema do discurso" required>
+          </div>
+          <div class="input-group" style="flex:0 0 auto;">
+            <button type="submit" class="btn btn-primary">💾 Salvar</button>
+          </div>
+          <div class="input-group" style="flex:0 0 auto;">
+            <button type="button" id="cancelEsbocoEditBtn" class="btn btn-ghost hidden">Cancelar</button>
+          </div>
+        </form>
+
+        <div class="input-group">
+          <label for="esbocoSearch">Pesquisar</label>
+          <input type="text" id="esbocoSearch" placeholder="🔎 Pesquisar por número ou tema...">
+        </div>
+
+        <div id="esbocosList" class="speakers-list"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="resetEsbocosBtn" class="btn btn-danger">Restaurar lista padrão</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>&copy;Desenvolvido por GA automações </p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="esbocos/esbocos.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/speakers.js"></script>
+  <script src="esbocos/esbocosManager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
