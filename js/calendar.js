@@ -13,6 +13,7 @@ const CalendarApp = (() => {
   const colorPicker = document.getElementById('colorPicker');
   const customColor = document.getElementById('customColor');
   const deleteBtn = document.getElementById('deleteAppointmentBtn');
+  const markCompletedBtn = document.getElementById('markCompletedBtn');
 
   const MONTH_NAMES = [
     'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
@@ -111,7 +112,7 @@ const CalendarApp = (() => {
     selectedDateKey = key;
     const existing = Storage.get(key);
 
-    modalDateLabel.textContent = `Agendamento - ${pad(day)}/${pad(month + 1)}/${year}` + (existing?.isLocalDesignation ? ' (Designação de Orador Local)' : '');
+    modalDateLabel.textContent = `Agendamento - ${pad(day)}/${pad(month + 1)}/${year}` + (existing?.isLocalDesignation ? ' (Designação de Orador Local)' : '') + (existing?.realizadoEm ? ' (Discurso realizado)' : '');
 
     document.getElementById('orador').value = existing?.orador || '';
     document.getElementById('congregacao').value = existing?.congregacao || '';
@@ -125,6 +126,11 @@ const CalendarApp = (() => {
     updateSwatchSelection();
 
     deleteBtn.classList.toggle('hidden', !existing);
+    markCompletedBtn.classList.toggle('hidden', !existing);
+    markCompletedBtn.disabled = Boolean(existing?.realizadoEm);
+    markCompletedBtn.textContent = existing?.realizadoEm
+      ? `Realizado em ${existing.realizadoEm.split('-').reverse().join('/')}`
+      : 'Marcar como realizado';
 
     modal.classList.remove('hidden');
   }
@@ -165,12 +171,68 @@ const CalendarApp = (() => {
       numero: document.getElementById('numero').value.trim(),
       telefone: document.getElementById('telefone').value.trim(),
       observacoes: document.getElementById('observacoes').value.trim(),
-      cor: selectedColor
+      cor: selectedColor,
+      realizadoEm: Storage.get(selectedDateKey)?.realizadoEm || ''
     };
 
+    const conflict = AppointmentRules.findConflict(selectedDateKey, data, Storage.getAll(), TalkHistoryStorage.getAll());
+    if (conflict) {
+      const dateLabel = conflict.key.split('-').reverse().join('/');
+      const message = conflict.type === 'orador'
+        ? `Este orador já está agendado neste mês (${dateLabel}).`
+        : conflict.type === 'realizado'
+          ? `O discurso Nº ${conflict.value} foi realizado em ${dateLabel} e só poderá ser repetido após cinco meses.`
+        : `Este discurso já foi agendado na congregação "${conflict.congregation || 'não informada'}" em ${dateLabel}. Aguarde três meses ou informe outra congregação.`;
+      alert(`Não foi possível salvar: ${message}`);
+      e.stopImmediatePropagation();
+      return;
+    }
+
     Storage.save(selectedDateKey, data);
+    if (data.realizadoEm) TalkHistoryStorage.saveCompleted(selectedDateKey, data);
     closeModal();
     render();
+  });
+
+  markCompletedBtn.addEventListener('click', () => {
+    if (!selectedDateKey) return;
+    const now = new Date();
+    const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    if (selectedDateKey > today) {
+      alert('Não é possível marcar como realizado antes da data do discurso.');
+      return;
+    }
+
+    const data = Storage.get(selectedDateKey);
+    if (!data) return;
+    const updated = {
+      ...data,
+      orador: document.getElementById('orador').value.trim(),
+      congregacao: document.getElementById('congregacao').value.trim(),
+      tema: document.getElementById('tema').value.trim(),
+      numero: document.getElementById('numero').value.trim(),
+      telefone: document.getElementById('telefone').value.trim(),
+      observacoes: document.getElementById('observacoes').value.trim(),
+      cor: selectedColor,
+      realizadoEm: selectedDateKey
+    };
+    if (!updated.numero) {
+      alert('Informe o número do discurso antes de marcá-lo como realizado.');
+      return;
+    }
+    const conflict = AppointmentRules.findCompletedConflict(selectedDateKey, updated, TalkHistoryStorage.getAll());
+    if (conflict) {
+      const dateLabel = conflict.key.split('-').reverse().join('/');
+      alert(`O discurso Nº ${conflict.value} já foi realizado em ${dateLabel}.`);
+      return;
+    }
+
+    Storage.save(selectedDateKey, updated);
+    TalkHistoryStorage.saveCompleted(selectedDateKey, updated);
+    const dateLabel = selectedDateKey.split('-').reverse().join('/');
+    closeModal();
+    render();
+    alert(`Discurso feito: Nº ${updated.numero || '-'} - ${updated.orador || 'Orador não informado'}, realizado em ${dateLabel}.`);
   });
 
   deleteBtn.addEventListener('click', () => {

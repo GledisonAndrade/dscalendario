@@ -138,6 +138,8 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
 
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover { background: #c9313d; }
+.btn-secondary { background: #eef1f4; color: var(--text-dark); }
+.btn-secondary:hover { background: #dfe4e9; }
 
 .btn-icon {
   background: var(--primary);
@@ -287,7 +289,8 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
   animation: fadeIn .25s ease;
 }
 
-.modal-wide { max-width: 620px; }
+.modal-wide { max-width: 1040px; }
+.modal-detail { max-width: 620px; }
 
 .modal-header {
   display: flex;
@@ -362,6 +365,39 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
 
 /* ===================== LISTA DE ORADORES ===================== */
 .speakers-list { display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; }
+
+.speaker-section + .speaker-section { margin-top: 24px; }
+.speaker-section h3 { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; font-size: 16px; }
+.section-count { color: var(--text-muted); font-size: 12px; font-weight: 500; }
+.speaker-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; }
+.speaker-table { width: 100%; min-width: 720px; border-collapse: collapse; text-align: left; }
+.speaker-table th, .speaker-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.speaker-table th { background: #f5f7f9; color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+.speaker-table td { font-size: 13px; }
+.speaker-table tr:last-child td { border-bottom: 0; }
+.speaker-table .speech-cell { max-width: 280px; }
+.speaker-table .row-actions { display: flex; gap: 6px; white-space: nowrap; }
+.speaker-table .details-action { min-height: 34px; padding: 0 10px; font-size: 12px; }
+.speaker-table .table-empty { padding: 18px; color: var(--text-muted); text-align: center; }
+.data-page { max-width: 1100px; }
+.data-page h2 { font-size: 18px; margin: 22px 0 10px; }
+.data-page h2:first-child { margin-top: 0; }
+.data-page .record-toolbar h2:first-child { margin: 0; }
+.data-page .speaker-table-wrap { margin-bottom: 22px; }
+.data-page .speaker-table { min-width: 640px; }
+.record-form { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 12px; align-items: end; }
+.record-form .input-group { margin-bottom: 8px; }
+.record-form .form-action { padding-bottom: 8px; }
+.record-form .form-action .btn { width: 100%; }
+.record-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 18px 0 10px; }
+.record-toolbar .input-group { width: min(360px, 100%); margin: 0; }
+.status-blocked { color: #b45309; font-weight: 600; }
+.status-available { color: #16834a; font-weight: 600; }
+.speaker-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.speaker-details-grid > div { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.speaker-details-grid span { color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+.speaker-details-grid strong { overflow-wrap: anywhere; font-size: 14px; font-weight: 500; }
+.speaker-details-grid .speaker-detail-notes { grid-column: 1 / -1; }
 
 .empty-msg { color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px 0; }
 
@@ -491,6 +527,10 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
   .day-cell { min-height: 64px; padding: 4px; }
   .event-info { font-size: 9px; -webkit-line-clamp: 2; }
   .row-2 { grid-template-columns: 1fr; }
+  .speaker-details-grid { grid-template-columns: 1fr; }
+  .speaker-details-grid .speaker-detail-notes { grid-column: auto; }
+  .record-form { grid-template-columns: 1fr; gap: 0; }
+  .record-toolbar { align-items: stretch; flex-direction: column; }
 }
 
 /* ===================== ACESSIBILIDADE - ZOOM DO CALENDÁRIO ===================== */

@@ -1,8 +1,10 @@
-/* ===================== LISTA DE ORADORES DO MÊS ===================== */
+/* ===================== TABELAS MENSAIS DE ORADORES ===================== */
 
 const speakersModal = document.getElementById('speakersModal');
-const speakersList = document.getElementById('speakersList');
+const visitorsList = document.getElementById('visitorsList');
+const outgoingList = document.getElementById('outgoingList');
 const speakersModalTitle = document.getElementById('speakersModalTitle');
+const speakerDetailsModal = document.getElementById('speakerDetailsModal');
 let returningToSpeakers = false;
 
 function formatDateLabel(key) {
@@ -10,53 +12,96 @@ function formatDateLabel(key) {
   return `${day}/${month}/${year}`;
 }
 
-function renderSpeakersList() {
-  const { monthName, year } = CalendarApp.getCurrentMonthData();
-  speakersModalTitle.textContent = `Oradores de ${monthName} de ${year}`;
+function escapeSpeakerHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+}
 
-  const entries = CalendarApp.getMonthEntries();
-
-  if (entries.length === 0) {
-    speakersList.innerHTML = '<p class="empty-msg">Nenhum orador agendado para este mês.</p>';
-    return;
+function renderSpeakerRows(entries, localDesignations) {
+  const sectionEntries = entries.filter(entry => Boolean(entry.isLocalDesignation) === localDesignations);
+  if (sectionEntries.length === 0) {
+    return '<tr><td colspan="5" class="table-empty">Nenhum agendamento nesta seção para este mês.</td></tr>';
   }
 
-  speakersList.innerHTML = entries.map(entry => `
-    <div class="speaker-item" style="border-left-color:${entry.cor || '#4361ee'}" data-key="${entry.key}">
-      <div class="speaker-info">
-        <span class="speaker-date">${formatDateLabel(entry.key)}</span>
-        <strong class="speaker-name">${entry.orador || 'Sem nome'}</strong>
-        <span class="speaker-detail">${entry.congregacao || '-'}</span>
-        <span class="speaker-detail">${entry.tema || '-'}${entry.numero ? ' (Nº ' + entry.numero + ')' : ''}</span>
-        <span class="speaker-detail">${entry.telefone || '-'}</span>
-      </div>
-      <div class="speaker-actions">
-        <button type="button" class="btn btn-icon-sm speaker-edit" title="Alterar">✏️</button>
-        <button type="button" class="btn btn-icon-sm speaker-delete" title="Excluir">🗑️</button>
-      </div>
-    </div>
+  return sectionEntries.map(entry => `
+    <tr data-key="${entry.key}">
+      <td>${formatDateLabel(entry.key)}</td>
+      <td>${escapeSpeakerHtml(entry.orador || 'Sem nome')}</td>
+      <td>${escapeSpeakerHtml(entry.congregacao || '-')}</td>
+      <td class="speech-cell">${escapeSpeakerHtml(entry.tema || '-')}${entry.numero ? ` (Nº ${escapeSpeakerHtml(entry.numero)})` : ''}</td>
+      <td>
+        <div class="row-actions">
+          <button type="button" class="btn btn-outline details-action" data-action="details">Detalhes</button>
+          <button type="button" class="btn btn-icon-sm" data-action="edit" title="Editar agendamento" aria-label="Editar agendamento">✏️</button>
+          <button type="button" class="btn btn-icon-sm" data-action="delete" title="Excluir agendamento" aria-label="Excluir agendamento">🗑️</button>
+        </div>
+      </td>
+    </tr>
   `).join('');
 }
 
-speakersList.addEventListener('click', (e) => {
-  const item = e.target.closest('.speaker-item');
-  if (!item) return;
-  const key = item.dataset.key;
+function renderSpeakersList() {
+  const { monthName, year } = CalendarApp.getCurrentMonthData();
+  speakersModalTitle.textContent = `Agendamentos de ${monthName} de ${year}`;
 
-  if (e.target.closest('.speaker-edit')) {
+  const entries = CalendarApp.getMonthEntries();
+  const visitors = entries.filter(entry => !entry.isLocalDesignation);
+  const outgoing = entries.filter(entry => entry.isLocalDesignation);
+
+  document.getElementById('visitorsCount').textContent = `(${visitors.length})`;
+  document.getElementById('outgoingCount').textContent = `(${outgoing.length})`;
+  visitorsList.innerHTML = renderSpeakerRows(entries, false);
+  outgoingList.innerHTML = renderSpeakerRows(entries, true);
+}
+
+function showSpeakerDetails(entry) {
+  const fields = {
+    detailDate: formatDateLabel(entry.key),
+    detailType: entry.isLocalDesignation ? 'Orador local que vai sair' : 'Orador visitante recebido',
+    detailSpeaker: entry.orador || '-',
+    detailCongregation: entry.congregacao || '-',
+    detailTopic: entry.tema || '-',
+    detailNumber: entry.numero || '-',
+    detailPhone: entry.telefone || '-',
+    detailNotes: entry.observacoes || '-'
+  };
+  Object.entries(fields).forEach(([id, value]) => {
+    document.getElementById(id).textContent = value;
+  });
+  speakerDetailsModal.classList.remove('hidden');
+}
+
+function handleSpeakerTableClick(event) {
+  const row = event.target.closest('tr[data-key]');
+  const action = event.target.closest('[data-action]')?.dataset.action;
+  if (!row || !action) return;
+
+  const key = row.dataset.key;
+  const entry = Storage.get(key);
+  if (!entry) return;
+
+  if (action === 'details') {
+    showSpeakerDetails({ key, ...entry });
+    return;
+  }
+
+  if (action === 'edit') {
     speakersModal.classList.add('hidden');
     returningToSpeakers = true;
     CalendarApp.openModalForDate(key);
+    return;
   }
 
-  if (e.target.closest('.speaker-delete')) {
-    if (confirm('Deseja realmente excluir este agendamento?')) {
-      Storage.remove(key);
-      renderSpeakersList();
-      CalendarApp.render();
-    }
+  if (action === 'delete' && confirm('Deseja realmente excluir este agendamento?')) {
+    Storage.remove(key);
+    renderSpeakersList();
+    CalendarApp.render();
   }
-});
+}
+
+visitorsList.addEventListener('click', handleSpeakerTableClick);
+outgoingList.addEventListener('click', handleSpeakerTableClick);
 
 document.getElementById('viewSpeakersBtn').addEventListener('click', () => {
   renderSpeakersList();
@@ -67,8 +112,16 @@ document.getElementById('closeSpeakersModalBtn').addEventListener('click', () =>
   speakersModal.classList.add('hidden');
 });
 
-speakersModal.addEventListener('click', (e) => {
-  if (e.target === speakersModal) speakersModal.classList.add('hidden');
+speakersModal.addEventListener('click', event => {
+  if (event.target === speakersModal) speakersModal.classList.add('hidden');
+});
+
+document.getElementById('closeSpeakerDetailsBtn').addEventListener('click', () => {
+  speakerDetailsModal.classList.add('hidden');
+});
+
+speakerDetailsModal.addEventListener('click', event => {
+  if (event.target === speakerDetailsModal) speakerDetailsModal.classList.add('hidden');
 });
 
 document.getElementById('speakersDownloadPdfBtn').addEventListener('click', generateMonthPdf);

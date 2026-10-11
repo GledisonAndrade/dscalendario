@@ -303,6 +303,18 @@ document.getElementById('marcarDesignacaoBtn').addEventListener('click', () => {
     speakerId: detailsSpeaker.id
   };
 
+  const conflict = AppointmentRules.findConflict(designacaoData.value, data, Storage.getAll(), TalkHistoryStorage.getAll());
+  if (conflict) {
+    const dateLabel = conflict.key.split('-').reverse().join('/');
+    const message = conflict.type === 'orador'
+      ? `Este orador já está agendado neste mês (${dateLabel}).`
+      : conflict.type === 'realizado'
+        ? `O discurso Nº ${conflict.value} foi realizado em ${dateLabel} e só poderá ser repetido após cinco meses.`
+      : `Este discurso já foi agendado na congregação "${conflict.congregation || 'não informada'}" em ${dateLabel}. Aguarde três meses ou informe outra congregação.`;
+    alert(`Não foi possível marcar: ${message}`);
+    return;
+  }
+
   Storage.save(designacaoData.value, data);
   renderDesignacoesExistentes();
   alert('Designação marcada no calendário com sucesso!');
