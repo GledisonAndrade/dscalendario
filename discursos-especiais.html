@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discursos Especiais</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <section id="appScreen" class="screen">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">⭐</span>
+        <h1>Discursos Especiais</h1>
+      </div>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-outline">← Calendário</a>
+        <a href="historico-discursos.html" class="btn btn-outline">📋 Registros</a>
+        <a href="oradores.html" class="btn btn-outline">🎙️ Oradores Locais</a>
+        <button id="logoutBtn" class="btn btn-ghost">Sair</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <div class="calendar-wrapper data-page">
+        <form id="specialSpeechForm" class="record-form">
+          <input id="specialSpeechId" type="hidden">
+          <div class="input-group">
+            <label for="specialSpeechNumber">Número (opcional)</label>
+            <input id="specialSpeechNumber" type="text" inputmode="numeric" placeholder="Ex.: 1">
+          </div>
+          <div class="input-group">
+            <label for="specialSpeechTopic">Tema do discurso</label>
+            <input id="specialSpeechTopic" type="text" required>
+          </div>
+          <div class="input-group">
+            <label for="specialSpeechSpeaker">Orador</label>
+            <input id="specialSpeechSpeaker" type="text" required>
+          </div>
+          <div class="input-group">
+            <label for="specialSpeechCongregation">Congregação</label>
+            <input id="specialSpeechCongregation" type="text" placeholder="Opcional">
+          </div>
+          <div class="form-action">
+            <button id="saveSpecialSpeechBtn" type="submit" class="btn btn-primary">Salvar discurso</button>
+          </div>
+          <div class="form-action">
+            <button id="cancelSpecialSpeechEditBtn" type="button" class="btn btn-secondary hidden">Cancelar edição</button>
+          </div>
+        </form>
+
+        <div class="record-toolbar">
+          <h2>Discursos cadastrados</h2>
+          <div class="input-group">
+            <label for="specialSpeechSearch">Pesquisar por tema, número ou orador</label>
+            <input id="specialSpeechSearch" type="search" placeholder="Pesquisar">
+          </div>
+        </div>
+        <div class="speaker-table-wrap">
+          <table class="speaker-table">
+            <thead><tr><th>Nº</th><th>Tema</th><th>Orador</th><th>Congregação</th><th>Ações</th></tr></thead>
+            <tbody id="specialSpeechesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </section>
+  <footer class="app-footer"><p>*********jw.org**********</p></footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/specialSpeeches.js"></script>
+</body>
+</html>

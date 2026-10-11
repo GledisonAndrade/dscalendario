@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Histórico de Discursos</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <section id="appScreen" class="screen">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">📚</span>
+        <h1>Histórico de Discursos</h1>
+      </div>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-outline">← Calendário</a>
+        <a href="oradores.html" class="btn btn-outline">🎙️ Oradores Locais</a>
+        <a href="discursos-especiais.html" class="btn btn-outline">⭐ Discursos Especiais</a>
+        <a href="#speechRecords" class="btn btn-outline">📋 Registros</a>
+        <button id="logoutBtn" class="btn btn-ghost">Sair</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <div class="calendar-wrapper data-page">
+        <div class="record-toolbar">
+          <h2>Números e disponibilidade</h2>
+          <div class="input-group">
+            <label for="historySearch">Pesquisar por número, tema ou orador</label>
+            <input id="historySearch" type="search" placeholder="Pesquisar">
+          </div>
+        </div>
+        <div class="speaker-table-wrap">
+          <table class="speaker-table">
+            <thead><tr><th>Nº</th><th>Tema</th><th>Última realização</th><th>Orador</th><th>Disponível a partir de</th></tr></thead>
+            <tbody id="speechCatalogBody"></tbody>
+          </table>
+        </div>
+
+        <section id="speechRecords">
+          <h2>Discursos a fazer <span id="upcomingCount" class="section-count"></span></h2>
+          <div class="speaker-table-wrap">
+            <table class="speaker-table">
+              <thead><tr><th>Data</th><th>Nº</th><th>Tema</th><th>Orador</th><th>Congregação</th></tr></thead>
+              <tbody id="upcomingSpeechesBody"></tbody>
+            </table>
+          </div>
+
+          <h2>Discursos realizados <span id="completedCount" class="section-count"></span></h2>
+          <div class="speaker-table-wrap">
+            <table class="speaker-table">
+              <thead><tr><th>Data</th><th>Nº</th><th>Tema</th><th>Orador</th><th>Congregação</th></tr></thead>
+              <tbody id="speechHistoryBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </section>
+  <footer class="app-footer"><p>*********jw.org**********</p></footer>
+
+  <script src="js/storage.js"></script>
+  <script src="esbocos/esbocos.js"></script>
+  <script src="js/businessRules.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/speechHistory.js"></script>
+</body>
+</html>

@@ -45,6 +45,8 @@
         </div>
         <button id="viewSpeakersBtn" class="btn btn-outline">👥 Ver Oradores</button>
         <a href="oradores.html" class="btn btn-outline">🎙️ Oradores Locais</a>
+        <a href="historico-discursos.html" class="btn btn-outline">📋 Registros</a>
+        <a href="discursos-especiais.html" class="btn btn-outline">⭐ Discursos Especiais</a>
         <button id="manageEsbocosBtn" class="btn btn-outline">📋 Esboços</button>
         <button id="downloadPdfBtn" class="btn btn-outline">⬇ Baixar PDF do mês</button>
         <button id="logoutBtn" class="btn btn-ghost">Sair</button>
@@ -139,6 +141,7 @@
 
         <div class="modal-footer">
           <button type="button" id="deleteAppointmentBtn" class="btn btn-danger">Excluir</button>
+          <button type="button" id="markCompletedBtn" class="btn btn-secondary hidden">Marcar como realizado</button>
           <button type="submit" class="btn btn-primary">Salvar</button>
         </div>
       </form>
@@ -154,11 +157,47 @@
       </div>
 
       <div class="modal-body">
-        <div id="speakersList" class="speakers-list"></div>
+        <section class="speaker-section">
+          <h3>Oradores visitantes recebidos <span id="visitorsCount" class="section-count"></span></h3>
+          <div class="speaker-table-wrap">
+            <table class="speaker-table">
+              <thead><tr><th>Data</th><th>Orador</th><th>Congregação de origem</th><th>Discurso</th><th>Ações</th></tr></thead>
+              <tbody id="visitorsList"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="speaker-section">
+          <h3>Oradores locais que vão sair <span id="outgoingCount" class="section-count"></span></h3>
+          <div class="speaker-table-wrap">
+            <table class="speaker-table">
+              <thead><tr><th>Data</th><th>Orador</th><th>Congregação de destino</th><th>Discurso</th><th>Ações</th></tr></thead>
+              <tbody id="outgoingList"></tbody>
+            </table>
+          </div>
+        </section>
       </div>
 
       <div class="modal-footer">
         <button type="button" id="speakersDownloadPdfBtn" class="btn btn-primary">⬇ Baixar PDF do mês</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="speakerDetailsModal" class="modal-overlay hidden">
+    <div class="modal modal-detail">
+      <div class="modal-header">
+        <h2>Detalhes do agendamento</h2>
+        <button id="closeSpeakerDetailsBtn" class="modal-close" aria-label="Fechar detalhes">&times;</button>
+      </div>
+      <div class="modal-body speaker-details-grid">
+        <div><span>Data</span><strong id="detailDate"></strong></div>
+        <div><span>Tipo</span><strong id="detailType"></strong></div>
+        <div><span>Orador</span><strong id="detailSpeaker"></strong></div>
+        <div><span>Congregação</span><strong id="detailCongregation"></strong></div>
+        <div><span>Tema</span><strong id="detailTopic"></strong></div>
+        <div><span>Número</span><strong id="detailNumber"></strong></div>
+        <div><span>Telefone</span><strong id="detailPhone"></strong></div>
+        <div class="speaker-detail-notes"><span>Observações</span><strong id="detailNotes"></strong></div>
       </div>
     </div>
   </div>
@@ -210,6 +249,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="js/storage.js"></script>
   <script src="esbocos/esbocos.js"></script>
+  <script src="js/businessRules.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/calendar.js"></script>
   <script src="js/pdf.js"></script>
