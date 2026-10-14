@@ -119,6 +119,9 @@ const CalendarApp = (() => {
     document.getElementById('tema').value = existing?.tema || '';
     document.getElementById('numero').value = existing?.numero || '';
     document.getElementById('telefone').value = existing?.telefone || '';
+    document.getElementById('presidente').value = existing?.presidente || '';
+    document.getElementById('dirigenteSentinela').value = existing?.dirigenteSentinela || '';
+    document.getElementById('oracaoFinal').value = existing?.oracaoFinal || '';
     document.getElementById('observacoes').value = existing?.observacoes || '';
 
     selectedColor = existing?.cor || '#4361ee';
@@ -170,6 +173,9 @@ const CalendarApp = (() => {
       tema: document.getElementById('tema').value.trim(),
       numero: document.getElementById('numero').value.trim(),
       telefone: document.getElementById('telefone').value.trim(),
+      presidente: document.getElementById('presidente').value.trim(),
+      dirigenteSentinela: document.getElementById('dirigenteSentinela').value.trim(),
+      oracaoFinal: document.getElementById('oracaoFinal').value.trim(),
       observacoes: document.getElementById('observacoes').value.trim(),
       cor: selectedColor,
       realizadoEm: Storage.get(selectedDateKey)?.realizadoEm || ''
@@ -212,6 +218,9 @@ const CalendarApp = (() => {
       tema: document.getElementById('tema').value.trim(),
       numero: document.getElementById('numero').value.trim(),
       telefone: document.getElementById('telefone').value.trim(),
+      presidente: document.getElementById('presidente').value.trim(),
+      dirigenteSentinela: document.getElementById('dirigenteSentinela').value.trim(),
+      oracaoFinal: document.getElementById('oracaoFinal').value.trim(),
       observacoes: document.getElementById('observacoes').value.trim(),
       cor: selectedColor,
       realizadoEm: selectedDateKey

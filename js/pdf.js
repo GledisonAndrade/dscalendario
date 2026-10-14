@@ -1,5 +1,7 @@
 /* ===================== GERAÇÃO DE PDF ===================== */
 
+const PDF_LIGHT_BROWN = { r: 205, g: 176, b: 140 };
+
 function hexToRgb(hex) {
   const clean = (hex || '#4361ee').replace('#', '');
   const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
@@ -33,9 +35,9 @@ function generateMonthPdf() {
   const marginX = 14;
   const cardWidth = pageWidth - marginX * 2;
 
-  doc.setFillColor(67, 97, 238);
+  doc.setFillColor(PDF_LIGHT_BROWN.r, PDF_LIGHT_BROWN.g, PDF_LIGHT_BROWN.b);
   doc.rect(0, 0, pageWidth, 26, 'F');
-  doc.setTextColor(255, 255, 255);
+  doc.setTextColor(60, 45, 30);
   doc.setFontSize(16);
   doc.text(`Oradores do mês - ${monthName} de ${year}`, marginX, 17);
 
@@ -48,8 +50,7 @@ function generateMonthPdf() {
   } else {
     entries.forEach((entry) => {
       const [, , day] = entry.date.split('-');
-      const cor = entry.cor || '#4361ee';
-      const bg = hexToRgb(cor);
+      const bg = PDF_LIGHT_BROWN;
       const fg = contrastColor(bg);
 
       const linhas = [
@@ -57,10 +58,14 @@ function generateMonthPdf() {
         `Congregação: ${entry.congregacao || '-'}`,
         `Tema: ${entry.tema || '-'}   Nº: ${entry.numero || '-'}`,
         `Telefone: ${entry.telefone || '-'}`,
+        entry.presidente ? `Presidente: ${entry.presidente}` : null,
+        entry.dirigenteSentinela ? `Dirigente da Sentinela: ${entry.dirigenteSentinela}` : null,
+        entry.oracaoFinal ? `Oração final: ${entry.oracaoFinal}` : null,
         entry.observacoes ? `Observações: ${entry.observacoes}` : null
       ].filter(Boolean);
 
-      const cardHeight = 14 + linhas.length * 6;
+      const pdfLinhas = linhas.flatMap(linha => doc.splitTextToSize(linha, cardWidth - 12));
+      const cardHeight = 14 + pdfLinhas.length * 6;
 
       if (y + cardHeight > 285) {
         doc.addPage();
@@ -79,8 +84,8 @@ function generateMonthPdf() {
 
       let ly = y + 16;
       doc.setFontSize(10.5);
-      linhas.forEach(linha => {
-        doc.text(doc.splitTextToSize(linha, cardWidth - 12), marginX + 6, ly);
+      pdfLinhas.forEach(linha => {
+        doc.text(linha, marginX + 6, ly);
         ly += 6;
       });
 

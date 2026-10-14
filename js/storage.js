@@ -1,5 +1,5 @@
 /* ===================== STORAGE HELPER ===================== */
-/* Persiste os agendamentos no localStorage no formato { "YYYY-MM-DD": { orador, congregacao, tema, numero, telefone, observacoes, cor } } */
+/* Persiste os agendamentos no localStorage no formato { "YYYY-MM-DD": { orador, congregacao, tema, numero, telefone, presidente, dirigenteSentinela, oracaoFinal, observacoes, cor } } */
 
 const STORAGE_KEY = 'agendamentos_oradores';
 const TALK_HISTORY_KEY = 'historico_discursos_realizados';
