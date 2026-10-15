@@ -391,6 +391,11 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
 .record-form .form-action .btn { width: 100%; }
 .record-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 18px 0 10px; }
 .record-toolbar .input-group { width: min(360px, 100%); margin: 0; }
+.help-page p { line-height: 1.6; font-size: 14px; }
+.help-steps { padding-left: 22px; display: grid; gap: 10px; font-size: 14px; line-height: 1.55; }
+.help-contacts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.help-contacts .btn { text-decoration: none; display: inline-block; }
+.login-help { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--primary); }
 .status-blocked { color: #b45309; font-weight: 600; }
 .status-available { color: #16834a; font-weight: 600; }
 .speaker-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
