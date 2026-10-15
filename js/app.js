@@ -9,6 +9,24 @@ document.addEventListener('DOMContentLoaded', () => {
   initA11yZoom();
 });
 
+/* ===================== SAUDAÇÃO ===================== */
+function updateGreeting() {
+  const greeting = document.getElementById('greetingMessage');
+  if (!greeting) return;
+
+  const hour = new Date().getHours();
+  const message = hour >= 5 && hour < 12
+    ? 'Bom dia!'
+    : hour >= 12 && hour < 18
+      ? 'Boa tarde!'
+      : 'Boa noite!';
+
+  greeting.textContent = `${message} Seja bem-vindo(a)!`;
+}
+
+updateGreeting();
+setInterval(updateGreeting, 60000);
+
 /* ===================== ACESSIBILIDADE - ZOOM DO CALENDÁRIO ===================== */
 const A11Y_KEY = 'agendamentos_a11y_level';
 const A11Y_MAX_LEVEL = 2;
